@@ -39,6 +39,6 @@ const getRandomAd = () => ({
   },
 });
 
-const ads = new Array(10).fill(null).map(() => getRandomAd());
-
-console.log(ads);
+getRandomAd();
+// const ads = new Array(10).fill(null).map(() => getRandomAd());
+// console.log(ads);
