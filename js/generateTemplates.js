@@ -1,12 +1,18 @@
 const mapCanvas = document.querySelector('.map__canvas');
 const similarCardTemplate = document.querySelector('#card').content.querySelector('.popup');
-const ORIGINALS = ['flat', 'bungalow', 'house', 'palace', 'hotel'];
-const TRANSLATES = ['Квартира', 'Бунгало', 'Дом', 'Дворец', 'Отель'];
+const idToNameMap = {
+  flat: 'Квартира',
+  bungalow: 'Бунгало',
+  house: 'Дом',
+  palace: 'Дворец',
+  hotel: 'Отель',
+};
 
 const getTypeTranslate = ((type) => {
-  for (let index = 0; index < ORIGINALS.length; index++) {
-    if(type === ORIGINALS[index]) {
-      return TRANSLATES[index];
+  const keys = Object.keys(idToNameMap);
+  for (let index = 0; index < keys.length; index++) {
+    if(type === keys[index]) {
+      return idToNameMap[keys[index]];
     }
   }
 });
