@@ -1,4 +1,7 @@
-import {getRandomPositiveFloat, getRandomPositiveInteger} from './utils.js';
+import {
+  getRandomPositiveFloat,
+  getRandomPositiveInteger
+} from './utils.js';
 
 const ESTATES = ['palace', 'flat', 'house', 'bungalow', 'hotel'];
 const FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
@@ -27,4 +30,6 @@ const getRandomAd = () => ({
   },
 });
 
-export {getRandomAd};
+export {
+  getRandomAd
+};
