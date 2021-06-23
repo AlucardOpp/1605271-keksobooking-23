@@ -11,7 +11,7 @@ const idToNameMap = {
 const getTypeTranslate = ((type) => {
   const keys = Object.keys(idToNameMap);
   for (let index = 0; index < keys.length; index++) {
-    if(type === keys[index]) {
+    if (type === keys[index]) {
       return idToNameMap[keys[index]];
     }
   }
@@ -39,10 +39,9 @@ const generateCards = ((data) => {
       li.classList.add('popup__feature', `popup__feature--${card.offer.features[index]}`);
       features.appendChild(li);
     }
-    if(card.offer.description) {
+    if (card.offer.description) {
       cardElement.querySelector('.popup__description').textContent = card.offer.description;
-    }
-    else {
+    } else {
       cardElement.querySelector('.popup__description').remove();
     }
     const photos = cardElement.querySelector('.popup__photos');
@@ -61,4 +60,6 @@ const generateCards = ((data) => {
   });
 });
 
-export {generateCards};
+export {
+  generateCards
+};
