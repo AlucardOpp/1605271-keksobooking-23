@@ -1,7 +1,6 @@
 import {
   disableElements,
-  enableElements,
-  findSelected
+  enableElements
 } from './utils.js';
 
 const adForm = document.querySelector('.ad-form');
@@ -18,10 +17,14 @@ const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
 const MAX_PRICE_VALUE = 1000000;
 const NUMBERS = /[0-9]/;
-const selectRoomNumber = document.querySelector('#room_number');
-const selectCapacity = document.querySelector('#capacity');
-const optionsCapacity = selectCapacity.querySelectorAll('option');
-const selectedRoomNumber = findSelected(selectRoomNumber);
+const roomNumberSelect = document.querySelector('#room_number');
+const capacitySelect = document.querySelector('#capacity');
+const typeSelect = document.querySelector('#type');
+const timeInSelect = document.querySelector('#timein');
+const timeOutSelect = document.querySelector('#timeout');
+const optionsCapacity = capacitySelect.querySelectorAll('option');
+const optionsTimeOut = timeOutSelect.querySelectorAll('option');
+const optionsTimeIn = timeInSelect.querySelectorAll('option');
 const allInputs = document.querySelectorAll('input');
 const requiredInputs = [];
 
@@ -30,6 +33,14 @@ for (const element of allInputs) {
     requiredInputs.push(element);
   }
 }
+
+const idToMinPriceMap = {
+  flat: '1000',
+  bungalow: '0',
+  house: '5000',
+  palace: '10000',
+  hotel: '3000',
+};
 
 const formDisable = () => {
   adForm.classList.add('ad-form--disabled');
@@ -59,8 +70,7 @@ const formEnable = () => {
 
 adTitle.addEventListener('input', () => {
   const valueLength = adTitle.value.length;
-  const inputValue = adTitle.value;
-  if (!inputValue) {
+  if (valueLength === 0) {
     adTitle.setCustomValidity('Обязательное поле');
   } else if (valueLength < MIN_TITLE_LENGTH) {
     adTitle.setCustomValidity(`Ещё ${MIN_TITLE_LENGTH - valueLength} симв.`);
@@ -94,9 +104,8 @@ adFormPrice.addEventListener('input', () => {
 });
 
 adAddress.addEventListener('input', () => {
-  const inputValue = adAddress.value;
   const valueLength = adAddress.value.length;
-  if (!inputValue) {
+  if (valueLength === 0) {
     adAddress.setCustomValidity('Обязательное поле');
   } else {
     adAddress.setCustomValidity('');
@@ -107,15 +116,7 @@ adAddress.addEventListener('input', () => {
   adAddress.reportValidity();
 });
 
-if (selectedRoomNumber.value === '1') {
-  for (const option of optionsCapacity) {
-    option.disabled = true;
-  }
-  optionsCapacity[2].disabled = false;
-  optionsCapacity[2].selected = true;
-}
-
-selectRoomNumber.addEventListener('change', (evt) => {
+roomNumberSelect.addEventListener('change', (evt) => {
   if (evt.target.value === '1') {
     disableElements(optionsCapacity);
     optionsCapacity[2].disabled = false;
@@ -137,10 +138,34 @@ selectRoomNumber.addEventListener('change', (evt) => {
 });
 
 adFormSubmit.addEventListener('click', () => {
-  for (const elementInput of requiredInputs) {
-    const input = elementInput;
+  for (const input of requiredInputs) {
     if (input.checkValidity() === false) {
       input.classList.add('ad-form__element--required');
+    }
+  }
+});
+
+typeSelect.addEventListener('change', (evt) => {
+  adFormPrice.min = idToMinPriceMap[evt.target.value];
+  adFormPrice.placeholder = idToMinPriceMap[evt.target.value];
+});
+
+timeInSelect.addEventListener('change', (evt) => {
+  for (const option of optionsTimeOut) {
+    if (evt.target.value === option.value) {
+      option.selected = true;
+    } else {
+      option.selected = false;
+    }
+  }
+});
+
+timeOutSelect.addEventListener('change', (evt) => {
+  for (const option of optionsTimeIn) {
+    if (evt.target.value === option.value) {
+      option.selected = true;
+    } else {
+      option.selected = false;
     }
   }
 });
