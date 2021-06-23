@@ -1,7 +1,6 @@
 import {
   disableElements,
-  enableElements,
-  findSelected
+  enableElements
 } from './utils.js';
 
 const adForm = document.querySelector('.ad-form');
@@ -26,8 +25,6 @@ const timeOutSelect = document.querySelector('#timeout');
 const optionsCapacity = capacitySelect.querySelectorAll('option');
 const optionsTimeOut = timeOutSelect.querySelectorAll('option');
 const optionsTimeIn = timeInSelect.querySelectorAll('option');
-const selectedRoomNumber = findSelected(roomNumberSelect);
-const selectedType = findSelected(typeSelect);
 const allInputs = document.querySelectorAll('input');
 const requiredInputs = [];
 
@@ -44,15 +41,6 @@ const idToMinPriceMap = {
   palace: '10000',
   hotel: '3000',
 };
-
-const getTypePrice = ((type) => {
-  const keys = Object.keys(idToMinPriceMap);
-  for (let index = 0; index < keys.length; index++) {
-    if (type === keys[index]) {
-      return idToMinPriceMap[keys[index]];
-    }
-  }
-});
 
 const formDisable = () => {
   adForm.classList.add('ad-form--disabled');
@@ -128,14 +116,6 @@ adAddress.addEventListener('input', () => {
   adAddress.reportValidity();
 });
 
-if (selectedRoomNumber.value === '1') {
-  for (const option of optionsCapacity) {
-    option.disabled = true;
-  }
-  optionsCapacity[2].disabled = false;
-  optionsCapacity[2].selected = true;
-}
-
 roomNumberSelect.addEventListener('change', (evt) => {
   if (evt.target.value === '1') {
     disableElements(optionsCapacity);
@@ -165,14 +145,9 @@ adFormSubmit.addEventListener('click', () => {
   }
 });
 
-if (selectedType.value === 'flat') {
-  adFormPrice.min = getTypePrice('flat');
-  adFormPrice.placeholder = getTypePrice('flat');
-}
-
 typeSelect.addEventListener('change', (evt) => {
-  adFormPrice.min = getTypePrice(evt.target.value);
-  adFormPrice.placeholder = getTypePrice(evt.target.value);
+  adFormPrice.min = idToMinPriceMap[evt.target.value];
+  adFormPrice.placeholder = idToMinPriceMap[evt.target.value];
 });
 
 timeInSelect.addEventListener('change', (evt) => {
