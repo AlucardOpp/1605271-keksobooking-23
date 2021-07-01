@@ -32,10 +32,12 @@ const generateCard = ((card) => {
   cardElement.querySelector('.popup__text--time').textContent = `Заезд после ${card.offer.checkin}, выезд до ${card.offer.checkout}`;
   const features = cardElement.querySelector('.popup__features');
   removeChildrens(features);
-  for (let index = 0; index < card.offer.features.length; index++) {
-    const li = document.createElement('li');
-    li.classList.add('popup__feature', `popup__feature--${card.offer.features[index]}`);
-    features.appendChild(li);
+  if (card.offer.features) {
+    for (let index = 0; index < card.offer.features.length; index++) {
+      const li = document.createElement('li');
+      li.classList.add('popup__feature', `popup__feature--${card.offer.features[index]}`);
+      features.appendChild(li);
+    }
   }
   if (card.offer.description) {
     cardElement.querySelector('.popup__description').textContent = card.offer.description;
@@ -44,14 +46,16 @@ const generateCard = ((card) => {
   }
   const photos = cardElement.querySelector('.popup__photos');
   removeChildrens(photos);
-  for (let index = 0; index < card.offer.photos.length; index++) {
-    const img = document.createElement('img');
-    img.classList.add('popup__photo');
-    img.width = 45;
-    img.height = 40;
-    img.alt = 'Фотография жилья';
-    img.src = card.offer.photos[index];
-    photos.appendChild(img);
+  if (card.offer.photos) {
+    for (let index = 0; index < card.offer.photos.length; index++) {
+      const img = document.createElement('img');
+      img.classList.add('popup__photo');
+      img.width = 45;
+      img.height = 40;
+      img.alt = 'Фотография жилья';
+      img.src = card.offer.photos[index];
+      photos.appendChild(img);
+    }
   }
   cardElement.querySelector('.popup__avatar').src = card.author.avatar;
   return cardElement;

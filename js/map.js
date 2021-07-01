@@ -3,13 +3,15 @@ import {
   formEnable
 } from './form.js';
 import {
-  getRandomAd
-} from './random-ad.js';
-import {
   generateCard
 } from './generateTemplates.js';
+import {
+  getData
+} from './fetch.js';
+import {
+  showAlert
+} from './utils.js';
 
-const ads = new Array(4).fill(null).map(() => getRandomAd());
 const addressInput = document.querySelector('#address');
 
 formDisable();
@@ -56,19 +58,27 @@ const similarIcon = L.icon({
   iconAnchor: [20, 40],
 });
 
-ads.forEach((item) => {
-  const marker = L.marker({
-    lat: item.location.lat,
-    lng: item.location.lng,
-  }, {
-    icon: similarIcon,
-  });
+getData(
+  (ads) => {
+    ads.forEach((item) => {
+      const marker = L.marker({
+        lat: item.location.lat,
+        lng: item.location.lng,
+      }, {
+        icon: similarIcon,
+      });
 
-  marker
-    .addTo(map)
-    .bindPopup(generateCard(item));
-});
+      marker
+        .addTo(map)
+        .bindPopup(generateCard(item));
+    });
+  },
+  () => {
+    showAlert('При загрузке данных с сервера произошла ошибка запроса');
+  },
+);
 
 export {
-  map
+  map,
+  mainPinMarker
 };

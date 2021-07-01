@@ -1,7 +1,13 @@
 import {
   disableElements,
-  enableElements
+  enableElements,
+  processSuccessAlert,
+  processErrorAlert,
+  resetTwoForms
 } from './utils.js';
+import {
+  sendData
+} from './fetch.js';
 
 const adForm = document.querySelector('.ad-form');
 const adFormHeader = document.querySelector('.ad-form-header');
@@ -13,6 +19,7 @@ const adTitle = document.querySelector('#title');
 const adFormSubmit = document.querySelector('.ad-form__submit');
 const adFormPrice = document.querySelector('#price');
 const adAddress = document.querySelector('#address');
+const resetButton = document.querySelector('.ad-form__reset');
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
 const MAX_PRICE_VALUE = 1000000;
@@ -26,6 +33,8 @@ const optionsCapacity = capacitySelect.querySelectorAll('option');
 const optionsTimeOut = timeOutSelect.querySelectorAll('option');
 const optionsTimeIn = timeInSelect.querySelectorAll('option');
 const allInputs = document.querySelectorAll('input');
+const successTemplate = document.querySelector('#success').content.querySelector('.success');
+const errorTemplate = document.querySelector('#error').content.querySelector('.error');
 const requiredInputs = [];
 
 for (const element of allInputs) {
@@ -145,6 +154,19 @@ adFormSubmit.addEventListener('click', () => {
   }
 });
 
+adForm.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  sendData(
+    () => processSuccessAlert(successTemplate, adForm, mapFilters),
+    () => processErrorAlert(errorTemplate),
+    new FormData(evt.target),
+  );
+});
+
+resetButton.addEventListener('click', () => {
+  resetTwoForms(adForm, mapFilters);
+});
+
 typeSelect.addEventListener('change', (evt) => {
   adFormPrice.min = idToMinPriceMap[evt.target.value];
   adFormPrice.placeholder = idToMinPriceMap[evt.target.value];
@@ -173,4 +195,5 @@ timeOutSelect.addEventListener('change', (evt) => {
 export {
   formDisable,
   formEnable
+  // setUserFormSubmit
 };
