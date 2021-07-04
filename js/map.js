@@ -1,6 +1,9 @@
 import {
   formDisable,
-  formEnable
+  formEnable,
+  mapFilters,
+  mapFeatures,
+  mapFilter
 } from './form.js';
 import {
   generateCard
@@ -9,10 +12,70 @@ import {
   getData
 } from './fetch.js';
 import {
+  debounce,
   showAlert
 } from './utils.js';
 
 const addressInput = document.querySelector('#address');
+const SIMILAR_ADS_COUNT = 10;
+const RERENDER_DELAY = 500;
+
+const getAdRank = (ad) => {
+  const housingTypeFilter = document.querySelector('#housing-type');
+  const housingPriceFilter = document.querySelector('#housing-price');
+  const housingRoomsFilter = document.querySelector('#housing-rooms');
+  const housingGuestsFilter = document.querySelector('#housing-guests');
+  const allCheckboxFilters = document.querySelectorAll('.map__checkbox');
+  const selectedCheckboxFilters = [];
+  for (const element of allCheckboxFilters) {
+    if (element.checked === true) {
+      selectedCheckboxFilters.push(element.value);
+    }
+  }
+
+  let rank = 0;
+
+  const compareValues = (firstValue, secondValue) => {
+    if (firstValue === secondValue) {
+      rank++;
+    }
+  };
+
+  compareValues(ad.offer.type, housingTypeFilter.value);
+  compareValues(ad.offer.type, housingPriceFilter.value);
+  compareValues(ad.offer.type, housingRoomsFilter.value);
+  compareValues(ad.offer.type, housingGuestsFilter.value);
+
+  let adFeaturesLength;
+  let filtersSelectedLength;
+  if (ad.offer.features) {
+    adFeaturesLength = ad.offer.features.length;
+  }
+
+  if (selectedCheckboxFilters.length > 0) {
+    filtersSelectedLength = selectedCheckboxFilters.length;
+  }
+
+  if (ad.offer.features && selectedCheckboxFilters.length > 0) {
+    for (let index = 0; index < adFeaturesLength; ++index) {
+      const filter = ad.offer.features[index];
+      for (let jindex = 0; jindex < filtersSelectedLength; ++jindex) {
+        if (filter === selectedCheckboxFilters[jindex]) {
+          rank++;
+        }
+      }
+    }
+  }
+
+  return rank;
+};
+
+const compareAds = (adA, adB) => {
+  const rankA = getAdRank(adA);
+  const rankB = getAdRank(adB);
+
+  return rankB - rankA;
+};
 
 formDisable();
 
@@ -58,25 +121,53 @@ const similarIcon = L.icon({
   iconAnchor: [20, 40],
 });
 
-getData(
-  (ads) => {
-    ads.forEach((item) => {
-      const marker = L.marker({
-        lat: item.location.lat,
-        lng: item.location.lng,
-      }, {
-        icon: similarIcon,
-      });
+const markerGroup = L.layerGroup().addTo(map);
 
-      marker
-        .addTo(map)
-        .bindPopup(generateCard(item));
-    });
-  },
-  () => {
-    showAlert('При загрузке данных с сервера произошла ошибка запроса');
-  },
-);
+
+const getAds = () => {
+  getData(
+    (ads) => {
+      ads
+        .slice()
+        .sort(compareAds)
+        .slice(0, SIMILAR_ADS_COUNT)
+        .forEach((item) => {
+          const marker = L.marker({
+            lat: item.location.lat,
+            lng: item.location.lng,
+          }, {
+            icon: similarIcon,
+          });
+          marker
+            .addTo(markerGroup)
+            .bindPopup(generateCard(item));
+        });
+      if (mapFilters.classList.contains('map__filters--disabled')) {
+        mapFilters.classList.remove('map__filters--disabled');
+        mapFeatures.disabled = false;
+        for (const element of mapFilter) {
+          element.disabled = false;
+        }
+      }
+    },
+    () => {
+      showAlert('При загрузке данных с сервера произошла ошибка запроса');
+    },
+  );
+};
+
+getAds();
+
+const filterAds = (cb) => {
+  mapFilters.addEventListener('change', () => {
+    if (markerGroup._layers) {
+      markerGroup.clearLayers();
+    }
+    cb();
+  });
+};
+
+filterAds(debounce(() => getAds(), RERENDER_DELAY));
 
 export {
   map,
