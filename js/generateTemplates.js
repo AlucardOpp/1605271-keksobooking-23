@@ -33,7 +33,7 @@ const generateCard = ((card) => {
   const features = cardElement.querySelector('.popup__features');
   removeChildrens(features);
   if (card.offer.features) {
-    for(const feature of card.offer.features) {
+    for (const feature of card.offer.features) {
       const li = document.createElement('li');
       li.classList.add('popup__feature', `popup__feature--${feature}`);
       features.appendChild(li);
@@ -47,7 +47,7 @@ const generateCard = ((card) => {
   const photos = cardElement.querySelector('.popup__photos');
   removeChildrens(photos);
   if (card.offer.photos) {
-    for(const photo of card.offer.photos) {
+    for (const photo of card.offer.photos) {
       const img = document.createElement('img');
       img.classList.add('popup__photo');
       img.width = 45;
