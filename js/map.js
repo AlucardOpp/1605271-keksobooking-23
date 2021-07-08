@@ -32,140 +32,110 @@ const allConditionsAreSatisfied = (ad) => {
       selectedCheckboxFilters.push(element.value);
     }
   }
-  let typeFilterIsTrue;
-  let priceFilterIsTrue;
-  let roomFilterIsTrue;
-  let guestsFilterIsTrue;
-  let allCheckboxFiltersAreTrue;
+
+  const prices = {
+    LOW: 10000,
+    HIGH: 50000,
+  };
+
+  const rooms = {
+    ONEROOM: 1,
+    TWOROOMS: 2,
+    THREEROOMS: 3,
+  };
+
+  const guests = {
+    ONEGUEST: 1,
+    TWOGUESTS: 2,
+    NOTFORGUESTS: 100,
+  };
 
   const checkType = (firstValue, secondValue) => {
     if (firstValue === secondValue) {
-      typeFilterIsTrue = true;
+      return true;
     } else if (secondValue === 'any') {
-      typeFilterIsTrue = true;
+      return true;
     } else {
-      typeFilterIsTrue = false;
+      return false;
     }
   };
 
   const checkPrice = (firstValue, secondValue) => {
     if (secondValue === 'middle') {
-      if (firstValue >= 10000 && firstValue <= 50000) {
-        priceFilterIsTrue = true;
-      } else {
-        priceFilterIsTrue = false;
-      }
+      return firstValue >= prices.LOW && firstValue <= prices.HIGH;
     } else if (secondValue === 'low') {
-      if (firstValue < 10000) {
-        priceFilterIsTrue = true;
-      } else {
-        priceFilterIsTrue = false;
-      }
+      return firstValue < prices.LOW;
     } else if (secondValue === 'high') {
-      if (firstValue >= 50000) {
-        priceFilterIsTrue = true;
-      } else {
-        priceFilterIsTrue = false;
-      }
+      return firstValue >= prices.HIGH;
     } else {
-      priceFilterIsTrue = true;
+      return true;
     }
   };
 
   const checkRooms = (firstValue, secondValue) => {
     if (secondValue === '1') {
-      if (firstValue === 1) {
-        roomFilterIsTrue = true;
-      } else {
-        roomFilterIsTrue = false;
-      }
+      return firstValue === rooms.ONEROOM;
     } else if (secondValue === '2') {
-      if (firstValue === 2) {
-        roomFilterIsTrue = true;
-      } else {
-        roomFilterIsTrue = false;
-      }
+      return firstValue === rooms.TWOROOMS;
     } else if (secondValue === '3') {
-      if (firstValue === 3) {
-        roomFilterIsTrue = true;
-      } else {
-        roomFilterIsTrue = false;
-      }
+      return firstValue === rooms.THREEROOMS;
     } else if (secondValue === 'any') {
-      roomFilterIsTrue = true;
+      return true;
     } else {
-      roomFilterIsTrue = false;
+      return false;
     }
   };
 
   const checkGuests = (firstValue, secondValue) => {
     if (secondValue === '2') {
-      if (firstValue === 2) {
-        guestsFilterIsTrue = true;
-      } else {
-        guestsFilterIsTrue = false;
-      }
+      return firstValue === guests.TWOGUESTS;
     } else if (secondValue === '1') {
-      if (firstValue === 1) {
-        guestsFilterIsTrue = true;
-      } else {
-        guestsFilterIsTrue = false;
-      }
+      return firstValue === guests.ONEGUEST;
     } else if (secondValue === '0') {
-      if (firstValue >= 100) {
-        guestsFilterIsTrue = true;
-      } else {
-        guestsFilterIsTrue = false;
-      }
+      return firstValue >= guests.NOTFORGUESTS;
     } else if (secondValue === 'any') {
-      guestsFilterIsTrue = true;
+      return true;
     } else {
-      guestsFilterIsTrue = false;
+      return false;
     }
   };
 
-  checkType(ad.offer.type, housingTypeFilter.value, typeFilterIsTrue);
-  checkPrice(ad.offer.price, housingPriceFilter.value, priceFilterIsTrue);
-  checkRooms(ad.offer.rooms, housingRoomsFilter.value, roomFilterIsTrue);
-  checkGuests(ad.offer.guests, housingGuestsFilter.value, guestsFilterIsTrue);
+  const isFeatureInclude = (elem) => ad.offer.features.includes(elem);
 
-  if (ad.offer.features && selectedCheckboxFilters.length > 0) {
-    for (const filter of selectedCheckboxFilters) {
-      if (ad.offer.features.includes(filter)) {
-        allCheckboxFiltersAreTrue = true;
+  const checkFeatures = (adFeatures, checkboxFilters) => {
+    if (adFeatures && checkboxFilters.length > 0) {
+      if (checkboxFilters.every(isFeatureInclude)) {
+        return true;
       } else {
-        allCheckboxFiltersAreTrue = false;
-        break;
+        return false;
       }
-    }
-  } else if (selectedCheckboxFilters.length > 0) {
-    allCheckboxFiltersAreTrue = false;
-  } else {
-    allCheckboxFiltersAreTrue = true;
-  }
-
-  const allFilters = [typeFilterIsTrue, priceFilterIsTrue, roomFilterIsTrue, guestsFilterIsTrue, allCheckboxFiltersAreTrue];
-  let selectsAreTrue;
-  for (const item of allFilters) {
-    if (item === true) {
-      selectsAreTrue = true;
+    } else if (checkboxFilters.length > 0) {
+      return false;
     } else {
-      selectsAreTrue = false;
-      break;
+      return true;
     }
-  }
+  };
 
-  return selectsAreTrue;
-};
-
-const conditionsFilter = (elem) => {
-  if (allConditionsAreSatisfied(elem)) {
-    return true;
-  } else {
+  if (!checkType(ad.offer.type, housingTypeFilter.value)) {
     return false;
   }
+  if (!checkPrice(ad.offer.price, housingPriceFilter.value)) {
+    return false;
+  }
+  if (!checkRooms(ad.offer.rooms, housingRoomsFilter.value)) {
+    return false;
+  }
+  if (!checkGuests(ad.offer.guests, housingGuestsFilter.value)) {
+    return false;
+  }
+  if (!checkFeatures(ad.offer.features, selectedCheckboxFilters)) {
+    return false;
+  }
+
+  return true;
 };
 
+const conditionsFilter = (elem) => allConditionsAreSatisfied(elem);
 
 formDisable();
 
