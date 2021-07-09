@@ -70,11 +70,6 @@ const formEnable = () => {
   for (const element of adFormElement) {
     element.disabled = false;
   }
-  mapFilters.classList.remove('map__filters--disabled');
-  mapFeatures.disabled = false;
-  for (const element of mapFilter) {
-    element.disabled = false;
-  }
 };
 
 adTitle.addEventListener('input', () => {
@@ -194,6 +189,8 @@ timeOutSelect.addEventListener('change', (evt) => {
 
 export {
   formDisable,
-  formEnable
-  // setUserFormSubmit
+  formEnable,
+  mapFilters,
+  mapFeatures,
+  mapFilter
 };
