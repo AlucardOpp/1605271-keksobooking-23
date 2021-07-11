@@ -1,2 +1,2 @@
 import './map.js';
-import './imagePreview.js';
+import './image-preview.js';

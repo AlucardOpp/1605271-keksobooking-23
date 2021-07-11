@@ -7,7 +7,7 @@ import {
 } from './form.js';
 import {
   generateCard
-} from './generateTemplates.js';
+} from './generate-card.js';
 import {
   getData
 } from './fetch.js';
@@ -19,6 +19,23 @@ import {
 const addressInput = document.querySelector('#address');
 const SIMILAR_ADS_COUNT = 10;
 const RERENDER_DELAY = 500;
+
+const Prices = {
+  LOW: 10000,
+  HIGH: 50000,
+};
+
+const Rooms = {
+  ONEROOM: 1,
+  TWOROOMS: 2,
+  THREEROOMS: 3,
+};
+
+const Guests = {
+  ONEGUEST: 1,
+  TWOGUESTS: 2,
+  NOTFORGUESTS: 100,
+};
 
 const allConditionsAreSatisfied = (ad) => {
   const housingTypeFilter = document.querySelector('#housing-type');
@@ -33,23 +50,6 @@ const allConditionsAreSatisfied = (ad) => {
     }
   }
 
-  const prices = {
-    LOW: 10000,
-    HIGH: 50000,
-  };
-
-  const rooms = {
-    ONEROOM: 1,
-    TWOROOMS: 2,
-    THREEROOMS: 3,
-  };
-
-  const guests = {
-    ONEGUEST: 1,
-    TWOGUESTS: 2,
-    NOTFORGUESTS: 100,
-  };
-
   const checkType = (firstValue, secondValue) => {
     if (firstValue === secondValue) {
       return true;
@@ -62,11 +62,11 @@ const allConditionsAreSatisfied = (ad) => {
 
   const checkPrice = (firstValue, secondValue) => {
     if (secondValue === 'middle') {
-      return firstValue >= prices.LOW && firstValue <= prices.HIGH;
+      return firstValue >= Prices.LOW && firstValue <= Prices.HIGH;
     } else if (secondValue === 'low') {
-      return firstValue < prices.LOW;
+      return firstValue < Prices.LOW;
     } else if (secondValue === 'high') {
-      return firstValue >= prices.HIGH;
+      return firstValue >= Prices.HIGH;
     } else {
       return true;
     }
@@ -74,11 +74,11 @@ const allConditionsAreSatisfied = (ad) => {
 
   const checkRooms = (firstValue, secondValue) => {
     if (secondValue === '1') {
-      return firstValue === rooms.ONEROOM;
+      return firstValue === Rooms.ONEROOM;
     } else if (secondValue === '2') {
-      return firstValue === rooms.TWOROOMS;
+      return firstValue === Rooms.TWOROOMS;
     } else if (secondValue === '3') {
-      return firstValue === rooms.THREEROOMS;
+      return firstValue === Rooms.THREEROOMS;
     } else if (secondValue === 'any') {
       return true;
     } else {
@@ -88,11 +88,11 @@ const allConditionsAreSatisfied = (ad) => {
 
   const checkGuests = (firstValue, secondValue) => {
     if (secondValue === '2') {
-      return firstValue === guests.TWOGUESTS;
+      return firstValue === Guests.TWOGUESTS;
     } else if (secondValue === '1') {
-      return firstValue === guests.ONEGUEST;
+      return firstValue === Guests.ONEGUEST;
     } else if (secondValue === '0') {
-      return firstValue >= guests.NOTFORGUESTS;
+      return firstValue >= Guests.NOTFORGUESTS;
     } else if (secondValue === 'any') {
       return true;
     } else {
@@ -182,7 +182,6 @@ const similarIcon = L.icon({
 });
 
 const markerGroup = L.layerGroup().addTo(map);
-
 
 const getAds = () => {
   getData(
