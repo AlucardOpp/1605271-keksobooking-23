@@ -38,7 +38,7 @@ const errorTemplate = document.querySelector('#error').content.querySelector('.e
 const requiredInputs = [];
 
 for (const element of allInputs) {
-  if (element.required === true) {
+  if (element.required) {
     requiredInputs.push(element);
   }
 }
@@ -143,7 +143,7 @@ roomNumberSelect.addEventListener('change', (evt) => {
 
 adFormSubmit.addEventListener('click', () => {
   for (const input of requiredInputs) {
-    if (input.checkValidity() === false) {
+    if (!input.checkValidity()) {
       input.classList.add('ad-form__element--required');
     }
   }
@@ -169,21 +169,13 @@ typeSelect.addEventListener('change', (evt) => {
 
 timeInSelect.addEventListener('change', (evt) => {
   for (const option of optionsTimeOut) {
-    if (evt.target.value === option.value) {
-      option.selected = true;
-    } else {
-      option.selected = false;
-    }
+    option.selected = (evt.target.value === option.value);
   }
 });
 
 timeOutSelect.addEventListener('change', (evt) => {
   for (const option of optionsTimeIn) {
-    if (evt.target.value === option.value) {
-      option.selected = true;
-    } else {
-      option.selected = false;
-    }
+    option.selected = (evt.target.value === option.value);
   }
 });
 

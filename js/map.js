@@ -26,15 +26,15 @@ const Prices = {
 };
 
 const Rooms = {
-  ONEROOM: 1,
-  TWOROOMS: 2,
-  THREEROOMS: 3,
+  ONE_ROOM: 1,
+  TWO_ROOMS: 2,
+  THREE_ROOMS: 3,
 };
 
 const Guests = {
-  ONEGUEST: 1,
-  TWOGUESTS: 2,
-  NOTFORGUESTS: 100,
+  ONE_GUEST: 1,
+  TWO_GUESTS: 2,
+  NOT_FOR_GUESTS: 100,
 };
 
 const allConditionsAreSatisfied = (ad) => {
@@ -50,15 +50,7 @@ const allConditionsAreSatisfied = (ad) => {
     }
   }
 
-  const checkType = (firstValue, secondValue) => {
-    if (firstValue === secondValue) {
-      return true;
-    } else if (secondValue === 'any') {
-      return true;
-    } else {
-      return false;
-    }
-  };
+  const checkType = (firstValue, secondValue) => (firstValue === secondValue) || (secondValue === 'any');
 
   const checkPrice = (firstValue, secondValue) => {
     if (secondValue === 'middle') {
@@ -74,11 +66,11 @@ const allConditionsAreSatisfied = (ad) => {
 
   const checkRooms = (firstValue, secondValue) => {
     if (secondValue === '1') {
-      return firstValue === Rooms.ONEROOM;
+      return firstValue === Rooms.ONE_ROOM;
     } else if (secondValue === '2') {
-      return firstValue === Rooms.TWOROOMS;
+      return firstValue === Rooms.TWO_ROOMS;
     } else if (secondValue === '3') {
-      return firstValue === Rooms.THREEROOMS;
+      return firstValue === Rooms.THREE_ROOMS;
     } else if (secondValue === 'any') {
       return true;
     } else {
@@ -88,11 +80,11 @@ const allConditionsAreSatisfied = (ad) => {
 
   const checkGuests = (firstValue, secondValue) => {
     if (secondValue === '2') {
-      return firstValue === Guests.TWOGUESTS;
+      return firstValue === Guests.TWO_GUESTS;
     } else if (secondValue === '1') {
-      return firstValue === Guests.ONEGUEST;
+      return firstValue === Guests.ONE_GUEST;
     } else if (secondValue === '0') {
-      return firstValue >= Guests.NOTFORGUESTS;
+      return firstValue >= Guests.NOT_FOR_GUESTS;
     } else if (secondValue === 'any') {
       return true;
     } else {
@@ -104,11 +96,7 @@ const allConditionsAreSatisfied = (ad) => {
 
   const checkFeatures = (adFeatures, checkboxFilters) => {
     if (adFeatures && checkboxFilters.length > 0) {
-      if (checkboxFilters.every(isFeatureInclude)) {
-        return true;
-      } else {
-        return false;
-      }
+      return checkboxFilters.every(isFeatureInclude);
     } else if (checkboxFilters.length > 0) {
       return false;
     } else {
