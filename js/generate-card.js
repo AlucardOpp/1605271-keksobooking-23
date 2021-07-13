@@ -1,3 +1,6 @@
+const WIDTH_PHOTO_CARD = 45;
+const HEIGHT_PHOTO_CARD = 40;
+
 const similarCardTemplate = document.querySelector('#card').content.querySelector('.popup');
 const idToNameMap = {
   flat: 'Квартира',
@@ -30,19 +33,15 @@ const generateCard = ((card) => {
       features.appendChild(li);
     }
   }
-  if (card.offer.description) {
-    cardElement.querySelector('.popup__description').textContent = card.offer.description;
-  } else {
-    cardElement.querySelector('.popup__description').remove();
-  }
+  card.offer.description ? cardElement.querySelector('.popup__description').textContent = card.offer.description : cardElement.querySelector('.popup__description').remove();
   const photos = cardElement.querySelector('.popup__photos');
   removeChildrens(photos);
   if (card.offer.photos) {
     for (const photo of card.offer.photos) {
       const img = document.createElement('img');
       img.classList.add('popup__photo');
-      img.width = 45;
-      img.height = 40;
+      img.width = WIDTH_PHOTO_CARD;
+      img.height = HEIGHT_PHOTO_CARD;
       img.alt = 'Фотография жилья';
       img.src = photo;
       photos.appendChild(img);

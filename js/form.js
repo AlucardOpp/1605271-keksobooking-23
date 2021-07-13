@@ -9,6 +9,10 @@ import {
   sendData
 } from './fetch.js';
 
+const MIN_TITLE_LENGTH = 30;
+const MAX_TITLE_LENGTH = 100;
+const MAX_PRICE_VALUE = 1000000;
+const NUMBERS = /[0-9]/;
 const adForm = document.querySelector('.ad-form');
 const adFormHeader = document.querySelector('.ad-form-header');
 const adFormElement = document.querySelectorAll('.ad-form__element');
@@ -20,10 +24,6 @@ const adFormSubmit = document.querySelector('.ad-form__submit');
 const adFormPrice = document.querySelector('#price');
 const adAddress = document.querySelector('#address');
 const resetButton = document.querySelector('.ad-form__reset');
-const MIN_TITLE_LENGTH = 30;
-const MAX_TITLE_LENGTH = 100;
-const MAX_PRICE_VALUE = 1000000;
-const NUMBERS = /[0-9]/;
 const roomNumberSelect = document.querySelector('#room_number');
 const capacitySelect = document.querySelector('#capacity');
 const typeSelect = document.querySelector('#type');

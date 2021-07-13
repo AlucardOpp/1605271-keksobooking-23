@@ -1,11 +1,7 @@
 const getData = (onSuccess, onError) => fetch('https://23.javascript.pages.academy/keksobooking/data')
-  .then((response) => {
-    if (response.ok) {
-      return response.json();
-    } else {
-      onError();
-    }
-  })
+  .then((response) =>
+    response.ok ? response.json() : onError(),
+  )
   .then((ads) => {
     onSuccess(ads);
   })
@@ -23,11 +19,7 @@ const sendData = (onSuccess, onFail, body) => {
     },
   )
     .then((response) => {
-      if (response.ok) {
-        onSuccess();
-      } else {
-        onFail();
-      }
+      response.ok ? onSuccess() : onFail();
     })
     .catch(() => {
       onFail();

@@ -16,7 +16,6 @@ import {
   showAlert
 } from './utils.js';
 
-const addressInput = document.querySelector('#address');
 const SIMILAR_ADS_COUNT = 10;
 const RERENDER_DELAY = 500;
 
@@ -25,10 +24,24 @@ const Prices = {
   HIGH: 50000,
 };
 
+const OptionsRooms = {
+  ONE_ROOM: '1',
+  TWO_ROOMS: '2',
+  THREE_ROOMS: '3',
+  ANY_ROOMS: 'any',
+};
+
 const Rooms = {
   ONE_ROOM: 1,
   TWO_ROOMS: 2,
   THREE_ROOMS: 3,
+};
+
+const OptionsGuests = {
+  NOT_FOR_GUESTS: '0',
+  ONE_GUEST: '1',
+  TWO_GUESTS: '2',
+  ANY_GUESTS: 'any',
 };
 
 const Guests = {
@@ -37,7 +50,9 @@ const Guests = {
   NOT_FOR_GUESTS: 100,
 };
 
-const allConditionsAreSatisfied = (ad) => {
+const addressInput = document.querySelector('#address');
+
+const areAllConditionsSatisfied = (ad) => {
   const housingTypeFilter = document.querySelector('#housing-type');
   const housingPriceFilter = document.querySelector('#housing-price');
   const housingRoomsFilter = document.querySelector('#housing-rooms');
@@ -65,31 +80,25 @@ const allConditionsAreSatisfied = (ad) => {
   };
 
   const checkRooms = (firstValue, secondValue) => {
-    if (secondValue === '1') {
+    if (secondValue === OptionsRooms.ONE_ROOM) {
       return firstValue === Rooms.ONE_ROOM;
-    } else if (secondValue === '2') {
+    } else if (secondValue === OptionsRooms.TWO_ROOMS) {
       return firstValue === Rooms.TWO_ROOMS;
-    } else if (secondValue === '3') {
+    } else if (secondValue === OptionsRooms.THREE_ROOMS) {
       return firstValue === Rooms.THREE_ROOMS;
-    } else if (secondValue === 'any') {
-      return true;
-    } else {
-      return false;
     }
+    return secondValue === OptionsRooms.ANY_ROOMS;
   };
 
   const checkGuests = (firstValue, secondValue) => {
-    if (secondValue === '2') {
+    if (secondValue === OptionsGuests.TWO_GUESTS) {
       return firstValue === Guests.TWO_GUESTS;
-    } else if (secondValue === '1') {
+    } else if (secondValue === OptionsGuests.ONE_GUEST) {
       return firstValue === Guests.ONE_GUEST;
-    } else if (secondValue === '0') {
+    } else if (secondValue === OptionsGuests.NOT_FOR_GUESTS) {
       return firstValue >= Guests.NOT_FOR_GUESTS;
-    } else if (secondValue === 'any') {
-      return true;
-    } else {
-      return false;
     }
+    return secondValue === OptionsGuests.ANY_GUESTS;
   };
 
   const isFeatureInclude = (elem) => ad.offer.features.includes(elem);
@@ -97,11 +106,8 @@ const allConditionsAreSatisfied = (ad) => {
   const checkFeatures = (adFeatures, checkboxFilters) => {
     if (adFeatures && checkboxFilters.length > 0) {
       return checkboxFilters.every(isFeatureInclude);
-    } else if (checkboxFilters.length > 0) {
-      return false;
-    } else {
-      return true;
     }
+    return !checkboxFilters.length > 0;
   };
 
   if (!checkType(ad.offer.type, housingTypeFilter.value)) {
@@ -116,14 +122,11 @@ const allConditionsAreSatisfied = (ad) => {
   if (!checkGuests(ad.offer.guests, housingGuestsFilter.value)) {
     return false;
   }
-  if (!checkFeatures(ad.offer.features, selectedCheckboxFilters)) {
-    return false;
-  }
 
-  return true;
+  return checkFeatures(ad.offer.features, selectedCheckboxFilters);
 };
 
-const conditionsFilter = (elem) => allConditionsAreSatisfied(elem);
+const filterConditions = (elem) => areAllConditionsSatisfied(elem);
 
 formDisable();
 
@@ -176,7 +179,7 @@ const getAds = () => {
     (ads) => {
       ads
         .slice()
-        .filter(conditionsFilter)
+        .filter(filterConditions)
         .slice(0, SIMILAR_ADS_COUNT)
         .forEach((item) => {
           const marker = L.marker({

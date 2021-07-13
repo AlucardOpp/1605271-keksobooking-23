@@ -2,22 +2,9 @@ import {
   mainPinMarker
 } from './map.js';
 const ALERT_SHOW_TIME = 5000;
+const DEBOUNCE_DELAY = 500;
 const successTemplate = document.querySelector('#success').content.querySelector('.success');
 const errorTemplate = document.querySelector('#error').content.querySelector('.error');
-
-const getRandomPositiveInteger = (min, max) => {
-  const lower = Math.ceil(Math.min(Math.abs(min), Math.abs(max)));
-  const upper = Math.floor(Math.max(Math.abs(min), Math.abs(max)));
-  const result = Math.floor(Math.random() * (upper - lower + 1) + lower);
-  return result;
-};
-
-const getRandomPositiveFloat = (min, max, digits = 1) => {
-  const lower = Math.min(Math.abs(min), Math.abs(max));
-  const upper = Math.max(Math.abs(min), Math.abs(max));
-  const result = (Math.random() * (upper - lower) + lower).toFixed(digits);
-  return result;
-};
 
 const disableElements = (arr) => {
   for (const element of arr) {
@@ -52,17 +39,44 @@ const resetTwoForms = (formOne, formTwo) => {
   });
 };
 
+let onSuccessAlertClick = () => {}; // Если не объявить заранее, то ESLint будет ругаться
+
+const onSuccessAlertKeydown = (evt) => {
+  if (evt.key === 'Escape' || evt.key === 'Esc') {
+    successTemplate.remove();
+    document.removeEventListener('keydown', onSuccessAlertKeydown);
+    document.removeEventListener('mouseup', onSuccessAlertClick);
+  }
+};
+
+onSuccessAlertClick = () => {
+  successTemplate.remove();
+  document.removeEventListener('mouseup', onSuccessAlertClick);
+  document.removeEventListener('keydown', onSuccessAlertKeydown);
+};
+
 const showSuccessAlert = (alert) => {
   document.body.append(alert);
-  document.addEventListener('keydown', (evt) => {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      successTemplate.remove();
-    }
-  });
-  document.addEventListener('mouseup', () => {
-    alert.remove();
-  });
+  document.addEventListener('keydown', onSuccessAlertKeydown);
+  document.addEventListener('mouseup', onSuccessAlertClick);
 };
+
+let onErrorAlertClick = () => {}; // Аналогично 42 строке
+
+const onErrorAlertKeydown = (evt) => {
+  if (evt.key === 'Escape' || evt.key === 'Esc') {
+    errorTemplate.remove();
+    document.removeEventListener('keydown', onErrorAlertKeydown);
+    document.removeEventListener('mouseup', onErrorAlertClick);
+  }
+};
+
+onErrorAlertClick = () => {
+  errorTemplate.remove();
+  document.removeEventListener('mouseup', onErrorAlertClick);
+  document.removeEventListener('keydown', onErrorAlertKeydown);
+};
+
 
 const showErrorAlert = (alert) => {
   document.body.append(alert);
@@ -70,14 +84,8 @@ const showErrorAlert = (alert) => {
   errorButton.addEventListener('click', () => {
     alert.remove();
   });
-  document.addEventListener('keydown', (evt) => {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      errorTemplate.remove();
-    }
-  });
-  document.addEventListener('mouseup', () => {
-    alert.remove();
-  });
+  document.addEventListener('keydown', onErrorAlertKeydown);
+  document.addEventListener('mouseup', onErrorAlertClick);
 };
 
 const processSuccessAlert = (alert, formOne, formTwo) => {
@@ -89,7 +97,7 @@ const processErrorAlert = (alert) => {
   showErrorAlert(alert);
 };
 
-const debounce = (callback, timeoutDelay = 500) => {
+const debounce = (callback, timeoutDelay = DEBOUNCE_DELAY) => {
   let timeoutId;
 
   return (...rest) => {
@@ -99,8 +107,6 @@ const debounce = (callback, timeoutDelay = 500) => {
 };
 
 export {
-  getRandomPositiveFloat,
-  getRandomPositiveInteger,
   disableElements,
   enableElements,
   showAlert,
